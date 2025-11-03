@@ -2,9 +2,9 @@ const express = require("express");
 
 const app = express();
 
-
-app.use("/test" , (req,res) => {
-    res.send("Hello World");
+// This will only handle get calls
+app.get("/user", (req, res) => {
+    res.send({name: "John", age: 30});
 })
 
 
