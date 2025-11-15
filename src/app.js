@@ -4,8 +4,13 @@ const app = express();
 const User = require("./models/user");
 const { validateSignUpData } = require("./utils/validation");
 const bcrypt = require("bcrypt");
+const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
+const userAuth = require("./middlewares/auth");
+
 
 app.use(express.json());
+app.use(cookieParser());
 
 app.post("/signup", async (req, res) => {
   try {
@@ -29,6 +34,47 @@ app.post("/signup", async (req, res) => {
     res.status(500).send("Error signing up user: " + error.message);
   }
 });
+
+
+app.post("/login", async(req, res) => {
+  try {
+    const {emailId, password } = req.body;
+
+    const user = await User.findOne({ emailId: emailId});
+
+
+    if(!user) {
+      throw new Error("use not found");
+    }
+
+    const isPassowrdValid = await user.validatePassword(password);
+
+    if(isPassowrdValid) {
+      const token = await user.getJWT();
+
+      res.cookie("token", token, {
+        expires: new Date(Date.now() + 8 * 3600000)
+      }); 
+      res.send("User logged in successfully");
+    } else {
+      throw new Error ("Invalid password");
+    }
+ 
+
+
+  } catch (error) {
+    res.status(500).send("Error logging in user: " + error.message);
+  }
+})
+
+app.get("/profile", userAuth, async(req, res) => {
+  try {
+    const user = req.user;
+    res.json(user);
+  } catch (error) {
+    res.status(500).send("Error fetching profile: " + error.message);
+  }
+})
 
 app.get("/feed", async (req, res) => {
   try {
