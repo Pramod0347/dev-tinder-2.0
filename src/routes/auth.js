@@ -34,19 +34,14 @@ authRouter.post("/signup", async (req, res) => {
 authRouter.post("/login", async(req, res) => {
   try {
     const {emailId, password } = req.body;
-
     const user = await User.findOne({ emailId: emailId});
-
-
     if(!user) {
       throw new Error("use not found");
     }
 
     const isPassowrdValid = await user.validatePassword(password);
-
     if(isPassowrdValid) {
       const token = await user.getJWT();
-
       res.cookie("token", token, {
         expires: new Date(Date.now() + 8 * 3600000)
       }); 
@@ -54,11 +49,20 @@ authRouter.post("/login", async(req, res) => {
     } else {
       throw new Error ("Invalid password");
     }
- 
-
-
   } catch (error) {
     res.status(500).send("Error logging in user: " + error.message);
+  }
+})
+
+authRouter.post('/logout', (req, res) => {
+  try{
+    // res.cookie("token", null, {
+    //   expires: new Date(Date.now())
+    // }); 
+    res.clearCookie("token");
+    res.send("User logged out successfully");
+  } catch (error) {
+    res.status(500).send("Error logging out user: " + error.message);
   }
 })
 

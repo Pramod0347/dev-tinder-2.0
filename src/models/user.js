@@ -45,6 +45,13 @@ const userSchema = new Schema({
   photoUrl: {
     type: String,
   },
+  skills: {
+    type: [String],
+    default: ["Engineer"],
+  },
+  about: {
+    type: String,
+  }
 });
 
 userSchema.methods.getJWT = async function () {
