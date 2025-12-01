@@ -35,12 +35,16 @@ const userSchema = new Schema({
   },
   gender: {
     type: String,
-    validate(value) {
-      const allowedGenders = ["male", "female", "other"];
-      if (!allowedGenders.includes(value.toLowerCase())) {
-        throw new Error("Invelid gender");
-      }
-    },
+    enum: {
+      values: ["male", "female","other"],
+      message: `{VALUE} is not a valid gender type`
+    }
+    // validate(value) {
+    //   const allowedGenders = ["male", "female", "other"];
+    //   if (!allowedGenders.includes(value.toLowerCase())) {
+    //     throw new Error("Invelid gender");
+    //   }
+    // },
   },
   photoUrl: {
     type: String,
