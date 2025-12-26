@@ -46,7 +46,7 @@ const userSchema = new Schema({
     //   }
     // },
   },
-  photoUrl: {
+  photoURL: {
     type: String,
   },
   skills: {

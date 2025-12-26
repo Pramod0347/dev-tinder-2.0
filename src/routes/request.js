@@ -34,6 +34,7 @@ requestRouter.post('/request/send/:status/:toUserId', userAuth, async (req, res)
                 { fromUserId, toUserId },
                 { fromUserId: toUserId, toUserId: fromUserId }
             ],
+            status: { $in: ["ignored", "interested"] }
         });
 
         if(existingConnectionRequest) {
